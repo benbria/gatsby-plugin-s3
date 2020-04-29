@@ -106,7 +106,7 @@ const createSafeS3Key = (key: string): string => {
     return key;
 };
 
-const deploy = async ({ yes, bucket }: { yes: boolean; bucket: string }) => {
+const deploy = async ({ yes, bucket, bucketPrefix }: { yes: boolean; bucket: string; bucketPrefix?: string }) => {
     const spinner = ora({ text: 'Retrieving bucket info...', color: 'magenta', stream: process.stdout }).start();
     let dontPrompt = yes;
 
@@ -123,6 +123,10 @@ const deploy = async ({ yes, bucket }: { yes: boolean; bucket: string }) => {
         // Override the bucket name if it is set via command line
         if (bucket) {
             config.bucketName = bucket;
+        }
+
+        if (bucketPrefix) {
+            config.bucketPrefix = bucketPrefix;
         }
 
         let httpOptions = {};
@@ -380,6 +384,10 @@ cli.command(
         args.option('bucket', {
             alias: 'b',
             describe: 'Bucket name (if you wish to override default bucket name)',
+        });
+        args.option('bucketPrefix', {
+            alias: 'p',
+            describe: 'Bucket prefix (if you wish to override default bucket prefix)',
         });
     },
     deploy
